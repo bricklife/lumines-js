@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>LUMINES player</title>
+<script src="lumines.js"></script>
+<script src="lumines-view.js"></script>
+<script src="lumines-player.js"></script>
+</head>
+<body>
+
+<h1>LUMINES player</h1>
+
+<canvas id="canvas" width="100" height="100"></canvas>
+
+<p id="comment"></p>
+
+<p id="url"></p>
+
+<script>
+function getQueryValues()
+{
+    if (document.location.search.length < 1)
+        return null;
+
+    var query = document.location.search.substring(1);
+    var parameters = query.split('&');
+
+    var result = new Object();
+    for (var i = 0; i < parameters.length; i++) {
+        var val = parameters[i].split('=');
+        if (val.length > 1) {
+            result[val[0]] = decodeURIComponent(val[1]);
+        }
+    }
+
+    return result;
+}
+
+function htmlspecialchars(ch) { 
+    ch = ch.replace(/&/g, '&amp;');
+    ch = ch.replace(/"/g, '&quot;'); // "
+    ch = ch.replace(/'/g, '&#039;'); // '
+    ch = ch.replace(/</g, '&lt;');
+    ch = ch.replace(/>/g, '&gt;');
+    return ch;
+}
+
+var stage = null;
+var nexts = null;
+var operations = null;
+var comment = null;
+var q = getQueryValues();
+if (q == null) {
+    q = {
+        stage:   'B---------______BB________',
+        next:    '17',
+        op:      'RGlGEE',
+        comment: 'Erasing L Block',
+    };
+}
+if (q['stage'] != null) {
+    stage = q['stage'].split('');
+}
+if (q['next'] != null) {
+    nexts = q['next'].split('');
+}
+if (q['op'] != null) {
+    operations = q['op'].split('');
+}
+if (q['comment'] != null) {
+    comment = q['comment'];
+}
+
+var width = 16;
+var height = 10;
+var player = new Lumines.Player(document.getElementById('canvas'), width, height);
+
+if (stage != null) {
+    stage.reverse();
+    for (var i = 0; i < stage.length; i++) {
+        var x = width - (i % width) - 1;
+        var y = height - Math.floor(i / width) - 1;
+        if (stage[i] == 'B') {
+            player.setBlockAt(new Lumines.Block(Lumines.Block.Color.BLACK), x, y);
+        } else if (stage[i] == 'W') {
+            player.setBlockAt(new Lumines.Block(Lumines.Block.Color.WHITE), x, y);
+        } else {
+            stage[i] = '-';
+        }
+    }
+}
+
+if (nexts != null) {
+    for (var i = 0; i < nexts.length; i++) {
+        if (nexts[i].match(/^[0123456789ABCDEF]$/)) {
+            var type = parseInt(nexts[i], 16);
+            player.pushNextBlock(new Lumines.QuadBlock(type));
+        } else {
+            nexts[i] = '';
+        }
+    }
+}
+    
+if (operations != null) {
+    for (var i = 0; i < operations.length; i++) {
+        switch (operations[i]) {
+        case 'L':
+            player.pushOperation(player.moveLeft);
+            break;
+        case 'R':
+            player.pushOperation(player.moveRight);
+            break;
+        case 'l':
+            player.pushOperation(player.rotateLeft);
+            break;
+        case 'r':
+            player.pushOperation(player.rotateRight);
+            break;
+        case 'G':
+            player.pushOperation(player.hardDrop);
+            break;
+        case 'E':
+            player.pushOperation(player.timeline);
+            break;
+        case 'S':
+            player.pushOperation(player.start);
+            break;
+        default:
+            operations[i] = '';
+            break;
+        }
+    }
+}
+
+player.pushOperation(player.start);
+
+player.start();
+
+if (comment != null) {
+    document.getElementById('comment').innerHTML = htmlspecialchars(comment);
+}
+
+var url = location.protocol + '//' + location.host + location.pathname;
+var param = new Array();
+if (stage != null) {
+    stage.reverse();
+    param.push('stage=' + stage.join(''));
+}
+if (nexts != null) {
+    param.push('next=' + nexts.join(''));
+}
+if (operations != null) {
+    param.push('op=' + operations.join(''));
+}
+if (comment != null) {
+    param.push('comment=' + escape(comment));
+}
+if (param.length > 0) {
+    url += '?' + param.join('&');
+}
+document.getElementById('url').innerHTML = '<a href="' + url + '">' + url + '</a>';
+
+</script>
+
+</body>
+</html>
