@@ -18,8 +18,8 @@ http://www.bricklife.com/service/lumines/player.html
 
 ### op
 - the array of operations
-- 'L' or 'R': move the block to the left or right
-- 'l' or 'r': rotate the block to the left or right
+- 'L' or 'R': move the block to the left or the right
+- 'l' or 'r': rotate the block to the left or the right
 - 'G': drop the block to the ground
 - 'E': move the timeline to the right edge from the left edge
 
