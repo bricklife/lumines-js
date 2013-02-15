@@ -144,7 +144,7 @@ Lumines.Player.prototype = {
         this.fall();
 
         if (timelinePos < this.field.width - 1) {
-            this.timeline.applyTimeout(100, this);
+            this.timeline.applyTimeout(250, this);
         } else {
             this.startTimer();
         }
