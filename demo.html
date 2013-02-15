@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>lumines.js demo</title>
+<script src="lumines.js"></script>
+<script src="lumines-view.js"></script>
+<script>
+Function.prototype.applyTimeout = function(ms, self, args)
+{
+    var f = this;
+    return setTimeout(function() {
+        f.apply(self, args);
+    }, ms);
+};
+
+Function.prototype.applyInterval = function(ms, self, args)
+{
+    var f = this;
+    return setInterval(function() {
+        f.apply(self, args);
+    }, ms);
+};
+</script>
+</head>
+<body>
+
+<h1>lumines.js demo</h1>
+
+<h2>game style demo</h2>
+
+<canvas id="game-canvas" width="384" height="256"></canvas>
+
+<div>
+<input type="button" value="L" onclick="game.rotateLeft()" />
+<input type="button" value="<" onclick="game.moveLeft()" />
+<!--<input type="button" value="v" onclick="game.moveDown()" />-->
+<input type="button" value="v" onclick="game.hardDrop()" />
+<input type="button" value=">" onclick="game.moveRight()" />
+<input type="button" value="R" onclick="game.rotateRight()" />
+<br>
+<input type="button" value="restart" onclick="game.start()" />
+</div>
+
+<script>
+Lumines.GameController = function(canvas, width, height)
+{
+    if (canvas != null) {
+        this.field = new Lumines.Field(width, height);
+        this.view = new Lumines.StageView(canvas, this.field.width, this.field.height, 16);
+    }
+};
+
+Lumines.GameController.prototype = {
+    start: function()
+    {
+        this.field.clear();
+        for (var x = 0; x < this.field.width; x++) {
+            var ystart = (x + this.field.height) % this.field.height;
+            for (var y = ystart; y < this.field.height; y++) {
+                var color = Math.floor(Math.random() * 2)
+                this.field.setBlockAt(new Lumines.Block(color), x, y);
+            }
+        }
+        
+        var generator = new Lumines.RandomBlockGenerator();
+        
+        this.stage = new Lumines.Stage(this.field, generator);
+        
+        this.stage.start();
+
+        this.timerStart();
+        
+        this.downTimerRestart();
+    },
+
+    timerStart: function()
+    {
+        this.timerStop();
+        this.timelineTimer = this.forwardTimeline.applyInterval(500, this);
+        this.fallTimer = this.fall.applyInterval(50, this);
+    },
+
+    timerStop: function()
+    {
+        clearInterval(this.timelineTimer);
+        clearInterval(this.fallTimer);
+    },
+
+    downTimerRestart: function()
+    {
+        clearInterval(this.downTimer);
+        this.downTimer = this.moveDown.applyInterval(2000, this);
+    },
+
+    forwardTimeline: function()
+    {
+        this.stage.forwardTimeline();
+        this.draw();
+    },
+
+    fall: function()
+    {
+        if (this.stage.fall()) {
+            this.draw();
+            return true;
+        }
+        return false;
+    },
+
+    rotateRight: function()
+    {
+        if (this.stage.rotateRight()) {
+            this.draw();
+            return true;
+        }
+        return false;
+    },
+
+    rotateLeft: function()
+    { 
+        if (this.stage.rotateLeft()) {
+            this.draw();
+            return true;
+        }
+        return false;
+    },
+
+    moveRight: function()
+    {
+        if (this.stage.moveRight()) {
+            this.draw();
+            return true;
+        }
+        return false;
+    },
+
+    moveLeft: function()
+    {
+        if (this.stage.moveLeft()) {
+            this.draw();
+            return true;
+        }
+        return false;
+    },
+    
+    moveDown: function()
+    {
+        if (this.stage.moveDown()) {
+            this.draw();
+            return true;
+        }
+
+        if (this.stage.ground()) {
+            this.fall();
+            this.stage.appearNextBlock();
+            this.downTimerRestart();
+            this.draw();
+        } else {
+            this.timerStop();
+        }
+        return false;
+    },
+
+    hardDrop: function()
+    {
+        if (this.downTimer != null) {
+            clearInterval(this.downTimer);
+            this.downTimer = null;
+        }
+        if (this.moveDown()) {
+            this.hardDrop.applyTimeout(50, this);
+        }
+    },
+    
+    draw: function()
+    {
+        this.view.draw(this.stage.getCurrentData());
+    },
+};
+
+var game = new Lumines.GameController(document.getElementById("game-canvas"));
+game.start();
+
+</script>
+
+<h2>replay style demo</h2>
+
+<canvas id="replay-canvas" width="384" height="256"></canvas>
+
+<script>
+Lumines.ReplayController = function(canvas, width, height)
+{
+    Lumines.GameController.apply(this, arguments);
+
+    this.originalField = new Lumines.Field(width, height);
+    this.originalNextBlocks = new Array();
+    this.originalOperations = new Array();
+};
+
+Lumines.ReplayController.prototype = new Lumines.GameController();
+
+Lumines.ReplayController.prototype.setBlockAt = function(block, x, y)
+{
+    this.originalField.setBlockAt(block, x, y);
+};
+
+Lumines.ReplayController.prototype.pushNextBlock = function(block)
+{
+    this.originalNextBlocks.push(block);
+};
+
+Lumines.ReplayController.prototype.pushOperation = function(operation)
+{
+    this.originalOperations.push(operation);
+};
+
+Lumines.ReplayController.prototype.start = function()
+{
+    this.field.clear();
+    for (var y = 0; y < this.field.height; y++) {
+        for (var x = 0; x < this.field.width; x++) {
+            var block = this.originalField.blockAt(x, y);
+            if (block != null) {
+                var color = block.color;
+                this.field.setBlockAt(new Lumines.Block(color), x, y);
+            }
+        }    
+    }
+    
+    var generator = new Lumines.NextBlockGenerator();
+    for (var i = 0; i < this.originalNextBlocks.length; i++) {
+        var blackPosition = this.originalNextBlocks[i].blackPosition;
+        generator.pushNextBlock(new Lumines.QuadBlock(blackPosition));
+    }
+    
+    this.operations = new Array();
+    for (var i = 0; i < this.originalOperations.length; i++) {
+        this.operations.push(this.originalOperations[i]);
+    }
+    
+    this.stage = new Lumines.Stage(this.field, generator);
+    
+    this.stage.start();
+    
+    this.timerStart();
+    
+    this.lastTimeline = -1;
+    
+    clearInterval(this.operationTimer);
+    this.operationTimer = this.doNextOperation.applyInterval(1000, this);
+};
+
+Lumines.ReplayController.prototype.downTimerRestart = function() {};
+
+Lumines.ReplayController.prototype.hardDrop = function()
+{
+    clearInterval(this.operationTimer);
+    
+    if (this.moveDown()) {
+        this.hardDrop.applyTimeout(50, this);
+    } else {
+        this.operationTimer = this.doNextOperation.applyInterval(1000, this);
+    }
+};
+
+Lumines.ReplayController.prototype.waitTimeline = function()
+{
+    clearInterval(this.operationTimer);
+    
+    var result = (this.lastTimeline > this.stage.timeline);
+    if (this.stage.movingBlock != null) {
+        result = (this.stage.timeline > this.stage.movingBlock.x + 1);
+    }
+    
+    if (result) {
+        this.lastTimeline = -1;
+        this.operationTimer = this.doNextOperation.applyInterval(1000, this);
+    } else {
+        this.lastTimeline = this.stage.timeline;
+        this.waitTimeline.applyTimeout(100, this);
+    }
+},
+    
+Lumines.ReplayController.prototype.doNextOperation = function()
+{
+    if (this.operations.length > 0) {
+        var func = this.operations.shift();
+        func.apply(this);
+    }
+};
+
+var replay = new Lumines.ReplayController(document.getElementById("replay-canvas"), 16, 10);
+
+replay.setBlockAt(new Lumines.Block(Lumines.Block.Color.BLACK), 8, 9);
+replay.setBlockAt(new Lumines.Block(Lumines.Block.Color.BLACK), 9, 9);
+replay.setBlockAt(new Lumines.Block(Lumines.Block.Color.BLACK), 9, 8);
+
+replay.pushNextBlock(new Lumines.QuadBlock(1));
+replay.pushNextBlock(new Lumines.QuadBlock(14));
+    
+replay.pushOperation(replay.moveLeft);
+replay.pushOperation(replay.rotateRight);
+replay.pushOperation(replay.hardDrop);
+replay.pushOperation(replay.waitTimeline);
+replay.pushOperation(replay.hardDrop);
+replay.pushOperation(replay.waitTimeline);
+replay.pushOperation(replay.waitTimeline);
+replay.pushOperation(replay.waitTimeline);
+replay.pushOperation(replay.timerStop);
+replay.pushOperation(replay.start);
+
+replay.start();
+
+</script>
+
+</body>
+</html>
