@@ -12,9 +12,15 @@
 
 <canvas id="canvas" width="100" height="100"></canvas>
 
-<p id="comment"></p>
+<p id="details">
+<span id="comment"></span>
+<br/>
+<span id="url"></span>
+</p>
 
-<p id="url"></p>
+<p id="links">
+more information: <a href="https://github.com/bricklife/lumines-js/">https://github.com/bricklife/lumines-js/</a>
+</p>
 
 <script>
 function getQueryValues()
@@ -55,7 +61,7 @@ if (q == null) {
         stage:   'B---------______BB________',
         next:    '17',
         op:      'RGlGEE',
-        comment: 'Erasing L Block',
+        comment: 'Erasing L block',
     };
 }
 if (q['stage'] != null) {
