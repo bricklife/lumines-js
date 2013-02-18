@@ -14,7 +14,7 @@ Lumines.Player = function(canvas, width, height)
 };
 
 Lumines.Player.prototype = {
-    start: function()
+    reset: function()
     {
         this.field.clear();
         for (var y = 0; y < this.field.height; y++) {
@@ -39,24 +39,54 @@ Lumines.Player.prototype = {
         }
     
         this.stage = new Lumines.Stage(this.field, generator);
-    
+
+        clearInterval(this.fallTimer);
+        clearInterval(this.hardDropTimer);
+        clearInterval(this.timelineTimer);
+
         this.stage.start();
 
         this.draw();
+    },
+
+    start: function()
+    {
+        this.reset();
+
+        this.pausing = false;
 
         this.startTimer();
     },
 
     startTimer: function()
     {
-        clearInterval(this.operationTimer);
-        this.operationTimer = this.doNextOperation.applyInterval(1000, this);
+        if (this.pausing == false) {
+            clearInterval(this.operationTimer);
+            this.operationTimer = this.doNextOperation.applyInterval(1000, this);
+        }
     },
 
     stopTimer: function()
     {
         clearInterval(this.operationTimer);
     },
+
+    pause: function()
+    {
+        this.pausing = true;
+        this.stopTimer();
+    },
+
+    resume: function()
+    {
+        this.pausing = false;
+        this.startTimer();
+    },
+
+    isPausing: function()
+    {
+        return this.pausing;
+    },    
 
     rotateRight: function()
     {
@@ -117,7 +147,7 @@ Lumines.Player.prototype = {
 
         if (this.stage.fall()) {
             this.draw();
-            this.fall.applyTimeout(50, this);
+            this.fallTimer = this.fall.applyTimeout(50, this);
         } else {
             this.startTimer();
         }
@@ -128,7 +158,7 @@ Lumines.Player.prototype = {
         this.stopTimer();
 
         if (this.moveDown()) {
-            this.hardDrop.applyTimeout(50, this);
+            this.hardDropTimer = this.hardDrop.applyTimeout(50, this);
         } else {
             this.startTimer();
         }
@@ -144,7 +174,7 @@ Lumines.Player.prototype = {
         this.fall();
 
         if (timelinePos < this.field.width - 1) {
-            this.timeline.applyTimeout(250, this);
+            this.timelineTimer = this.timeline.applyTimeout(250, this);
         } else {
             this.startTimer();
         }

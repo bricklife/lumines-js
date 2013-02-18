@@ -12,6 +12,11 @@
 
 <canvas id="canvas" width="100" height="100"></canvas>
 
+<div>
+<input type="button" id="reset-button" value="reset" onclick="player.reset();" />
+<input type="button" id="pause-button" value="pause" onclick="pauseAndResumePlayer();" />
+</div>
+
 <p id="details">
 <span id="comment"></span>
 <br/>
@@ -141,6 +146,18 @@ if (operations != null) {
 player.pushOperation(player.start);
 
 player.start();
+
+function pauseAndResumePlayer()
+{
+    var button = document.getElementById("pause-button");
+    if (player.isPausing()) {
+        player.resume();
+        button.value = "pause";
+    } else {
+        player.pause();
+        button.value = "resume";
+    }
+}
 
 if (comment != null) {
     document.getElementById('comment').innerHTML = htmlspecialchars(comment);
