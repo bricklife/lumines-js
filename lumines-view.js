@@ -18,9 +18,9 @@ Lumines.StageView.prototype = {
         this.ctx.fillStyle = "#333333";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.drawField(data, 4 * (this.unit + 1), this.unit + 1);
-
         this.drawNextField(data, this.unit + 1, this.unit + 1);
+
+        this.drawField(data, 4 * (this.unit + 1), this.unit + 1);
     },
 
     drawField: function(data, offsetX, offsetY)
