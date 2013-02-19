@@ -57,20 +57,21 @@ function htmlspecialchars(ch) {
 }
 
 var stage = null;
+var stageStr = null;
 var nexts = null;
 var operations = null;
 var comment = null;
 var q = getQueryValues();
 if (q == null) {
     q = {
-        stage:   'B---------______BB________',
+        stage:   'B-9-6BB-8',
         next:    '17',
         op:      'RGlGEE',
         comment: 'Erasing L block',
     };
 }
 if (q['stage'] != null) {
-    stage = q['stage'].split('');
+    stageStr = q['stage'];
 }
 if (q['next'] != null) {
     nexts = q['next'].split('');
@@ -86,7 +87,25 @@ var width = 16;
 var height = 10;
 var player = new Lumines.Player(document.getElementById('canvas'), width, height);
 
-if (stage != null) {
+if (stageStr != null) {
+    stage = new Array();
+
+    var s = stageStr.match(/\D\d*/g);
+    for (var i = 0; i < s.length; i++) {
+	if (s[i].match(/(\D)(\d*)/)) {
+	    var chr = RegExp.$1;
+	    var num = RegExp.$2;
+	    if (num == '') {
+		num = 1;
+	    } else {
+		num = parseInt(num);
+	    }
+	    for (var j = 0; j < num; j++) {
+		stage.push(chr);
+	    }
+	}
+    }
+
     stage.reverse();
     for (var i = 0; i < stage.length; i++) {
         var x = width - (i % width) - 1;
@@ -103,7 +122,7 @@ if (stage != null) {
 
 if (nexts != null) {
     for (var i = 0; i < nexts.length; i++) {
-        if (nexts[i].match(/^[0123456789ABCDEF]$/)) {
+        if (nexts[i].match(/[0123456789ABCDEF]/)) {
             var type = parseInt(nexts[i], 16);
             player.pushNextBlock(new Lumines.QuadBlock(type));
         } else {
@@ -167,7 +186,25 @@ var url = location.protocol + '//' + location.host + location.pathname;
 var param = new Array();
 if (stage != null) {
     stage.reverse();
-    param.push('stage=' + stage.join(''));
+    var lastChr = '';
+    var lastNum = 1;
+    var str = '';
+    for (var i = 0; i < stage.length; i++) {
+	if (stage[i] != lastChr) {
+	    if (lastNum > 1) {
+		str += lastNum;
+	    }
+	    str += stage[i];
+	    lastChr = stage[i];
+	    lastNum = 1;
+	} else {
+	    lastNum++;
+	}
+    }
+    if (lastNum > 1) {
+	str += lastNum;
+    }
+    param.push('stage=' + str);
 }
 if (nexts != null) {
     param.push('next=' + nexts.join(''));
