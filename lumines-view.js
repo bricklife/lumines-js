@@ -99,6 +99,38 @@ Lumines.StageView.prototype = {
             this.drawQuadBlock(block, block.x * (this.unit + 1), block.y * (this.unit + 1));
         }
 
+        // mass detection
+        var mass = new Array();
+        for (var i = targets.length - 1; i >= 0; i--) {
+            var connect = -1;
+            for (var j = 0; j < mass.length; j++) {
+                for (var k = 0; k < mass[j].length; k++) {
+                    if (this.checkConnection(targets[i], mass[j][k])) {
+                        if (connect == -1) {
+                            mass[j].push(targets[i]);
+                            connect = j;
+                        } else {
+                            mass[connect] = mass[connect].concat(mass[j]);
+                            mass[j] = null;
+                        }
+                        break;
+                    }
+                }
+            }
+            if (connect == -1) {
+                mass.push([targets[i]]);
+            }
+        }
+        for (var i = 0; i < mass.length; i++) {
+            if (mass[i] != null) {
+                var x = mass[i][0].x;
+                var y = mass[i][0].y;
+                this.ctx.font = (this.unit - 4) + "px Arial";
+                this.ctx.fillStyle = "#FFFFFF";
+                this.ctx.fillText(mass[i].length, (x + 1.2) * (this.unit + 1), (y + 2) * (this.unit + 1) - 4);
+            }
+        }
+
         // timeline
         var tunit = (this.unit - 4) / 2;
         this.ctx.beginPath();
@@ -207,5 +239,28 @@ Lumines.StageView.prototype = {
             this.ctx.fillStyle = "#ff9939";
         }
         this.ctx.fillRect(innerX, innerY, this.unit + 1, this.unit + 1);
+    },
+
+    checkConnection: function(a, b)
+    {
+        if (a.blockAt(Lumines.QuadBlock.Position.TOP_LEFT).color
+            != b.blockAt(Lumines.QuadBlock.Position.TOP_LEFT).color)
+            return false;
+
+        if (b.y == a.y + 2) {
+            if (b.x == a.x + 1) return true;
+            if (b.x == a.x)     return true;
+            if (b.x == a.x - 1) return true;
+        } else if (b.y == a.y + 1) {
+            if (b.x == a.x + 2) return true;
+            if (b.x == a.x + 1) return true;
+            if (b.x == a.x)     return true;
+            if (b.x == a.x - 1) return true;
+            if (b.x == a.x - 2) return true;
+        } else if (b.y == a.y) {
+            if (b.x == a.x + 2) return true;
+            if (b.x == a.x + 1) return true;
+        }
+        return false;
     },
 };
