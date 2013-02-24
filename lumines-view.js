@@ -144,7 +144,7 @@ Lumines.StageView.prototype = {
         this.ctx.strokeRect(tx - (this.unit * 2 - 2) + 0.5, ty + 0.5, this.unit * 2 - 3, this.unit - 1);
 
         this.ctx.beginPath();
-        this.ctx.moveTo(tx + 1, ty + 1);
+        this.ctx.moveTo(tx + 0.5, ty + 0.5);
         this.ctx.lineTo(tx + tunit, ty + tunit);
         this.ctx.lineTo(tx, ty + (tunit * 2));
         this.ctx.stroke();
