@@ -123,11 +123,9 @@ Lumines.StageView.prototype = {
         }
         for (var i = 0; i < mass.length; i++) {
             if (mass[i] != null) {
-                var x = mass[i][0].x;
-                var y = mass[i][0].y;
-                this.ctx.font = (this.unit - 4) + "px Arial";
-                this.ctx.fillStyle = "#FFFFFF";
-                this.ctx.fillText(mass[i].length, (x + 1.2) * (this.unit + 1), (y + 2) * (this.unit + 1) - 4);
+                var x = mass[i][0].x * (this.unit + 1) - 2;
+                var y = (mass[i][0].y + 2) * (this.unit + 1) - (this.unit / 2) - 2;
+                this.drawNumber(mass[i].length, x, y, 3);
             }
         }
 
@@ -262,5 +260,120 @@ Lumines.StageView.prototype = {
             if (b.x == a.x + 1) return true;
         }
         return false;
+    },
+
+    drawNumeral: function(n, x, y, sizex, sizey)
+    {
+        this.ctx.strokeStyle = "#FFFFFF";
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+
+        switch (n) {
+        case 0:
+            this.ctx.moveTo(x, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + sizey - 1);
+            this.ctx.lineTo(x + 1, y + sizey - 1);
+            this.ctx.lineTo(x + 1, y);
+            this.ctx.stroke();
+            break;
+        case 1:
+            this.ctx.moveTo(x + sizex - 6, y + 1);
+            this.ctx.lineTo(x + sizex - 3, y + 1);
+            this.ctx.lineTo(x + sizex - 3, y + sizey);
+            this.ctx.stroke();
+            break;
+        case 2:
+            this.ctx.moveTo(x, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + (sizey / 2));
+            this.ctx.lineTo(x + 1, y + (sizey / 2));
+            this.ctx.lineTo(x + 1, y + sizey - 1);
+            this.ctx.lineTo(x + sizex, y + sizey - 1);
+            this.ctx.stroke();
+            break;
+        case 3:
+            this.ctx.moveTo(x, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + sizey - 1);
+            this.ctx.lineTo(x, y + sizey - 1);
+            this.ctx.stroke();
+            this.ctx.moveTo(x + 1, y + (sizey / 2));
+            this.ctx.lineTo(x + sizex, y + (sizey / 2));
+            this.ctx.stroke();
+            break;
+        case 4:
+            this.ctx.moveTo(x + 1, y);
+            this.ctx.lineTo(x + 1, y + sizey - 3);
+            this.ctx.lineTo(x + sizex, y + sizey - 3);
+            this.ctx.stroke();
+            this.ctx.moveTo(x + sizex - 3, y);
+            this.ctx.lineTo(x + sizex - 3, y + sizey);
+            this.ctx.stroke();
+            break;
+        case 5:
+            this.ctx.moveTo(x + sizex, y + 1);
+            this.ctx.lineTo(x + 1, y + 1);
+            this.ctx.lineTo(x + 1, y + (sizey / 2));
+            this.ctx.lineTo(x + sizex - 1, y + (sizey / 2));
+            this.ctx.lineTo(x + sizex - 1, y + sizey - 1);
+            this.ctx.lineTo(x, y + sizey - 1);
+            this.ctx.stroke();
+            break;
+        case 6:
+            this.ctx.moveTo(x + sizex - 1, y + 1);
+            this.ctx.lineTo(x + 1, y + 1);
+            this.ctx.lineTo(x + 1, y + sizey - 1);
+            this.ctx.lineTo(x + sizex - 1, y + sizey - 1);
+            this.ctx.lineTo(x + sizex - 1, y + (sizey / 2));
+            this.ctx.lineTo(x + 1, y + (sizey / 2));
+            this.ctx.stroke();
+            break;
+        case 7:
+            this.ctx.moveTo(x, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + sizey);
+            this.ctx.stroke();
+            break;
+        case 8:
+            this.ctx.moveTo(x, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + sizey - 1);
+            this.ctx.lineTo(x + 1, y + sizey - 1);
+            this.ctx.lineTo(x + 1, y);
+            this.ctx.stroke();
+            this.ctx.moveTo(x + 1, y + (sizey / 2));
+            this.ctx.lineTo(x + sizex - 1, y + (sizey / 2));
+            this.ctx.stroke();
+            break;
+        case 9:
+            this.ctx.moveTo(x + sizex - 1, y + (sizey / 2));
+            this.ctx.lineTo(x + 1, y + (sizey / 2));
+            this.ctx.lineTo(x + 1, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + 1);
+            this.ctx.lineTo(x + sizex - 1, y + sizey - 1);
+            this.ctx.lineTo(x + 1, y + sizey - 1);
+            this.ctx.stroke();
+            break;
+        default:
+            break;
+        }
+    },
+
+    drawNumber: function(number, x, y, width)
+    {
+        var sizex = this.unit / 16 * 10;
+        var sizey = this.unit / 2;
+        var widthx = sizex + 2;
+        if (width == null || width <= 0) {
+            width = 1;
+        }
+
+        var n = number % 10;
+        for (var w = width - 1; number > 0; w--) {
+            var n = number % 10;
+            number = Math.floor(number / 10);
+            this.drawNumeral(n, x + (widthx * w), y, sizex, sizey);
+        }
     },
 };
