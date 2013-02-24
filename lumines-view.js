@@ -123,8 +123,8 @@ Lumines.StageView.prototype = {
         }
         for (var i = 0; i < mass.length; i++) {
             if (mass[i] != null) {
-                var x = mass[i][0].x * (this.unit + 1) - 2;
-                var y = (mass[i][0].y + 2) * (this.unit + 1) - (this.unit / 2) - 2;
+                var x = mass[i][0].x * (this.unit + 1) - 3;
+                var y = (mass[i][0].y + 2) * (this.unit + 1) - (this.unit / 2) - 3;
                 this.drawNumber(mass[i].length, x, y, 3);
             }
         }
