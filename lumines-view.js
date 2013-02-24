@@ -130,18 +130,27 @@ Lumines.StageView.prototype = {
         }
 
         // timeline
-        var tunit = (this.unit - 4) / 2;
+        var tunit = this.unit / 2;
+        var tx = data.timeline * (this.unit + 1);
+        var ty = -1 * (this.unit + 1) + 3;
         this.ctx.beginPath();
         this.ctx.lineWidth = 2;
         this.ctx.strokeStyle = "#ffd50d";
-        this.ctx.moveTo(data.timeline * (this.unit + 1), field.height * (this.unit + 1));
-        this.ctx.lineTo(data.timeline * (this.unit + 1), 0 - this.unit);
-        this.ctx.lineTo(data.timeline * (this.unit + 1) - (this.unit + tunit), 0 - this.unit);
-        this.ctx.lineTo(data.timeline * (this.unit + 1) - (this.unit + tunit), tunit * 2 - this.unit);
-        this.ctx.lineTo(data.timeline * (this.unit + 1), tunit * 2 - this.unit);
-        this.ctx.lineTo(data.timeline * (this.unit + 1) + tunit, tunit - this.unit);
-        this.ctx.lineTo(data.timeline * (this.unit + 1), 0 - this.unit);
+        this.ctx.moveTo(tx, field.height * (this.unit + 1));
+        this.ctx.lineTo(tx, ty);
         this.ctx.stroke();
+
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(tx - (this.unit * 2 - 2) + 0.5, ty + 0.5, this.unit * 2 - 3, this.unit - 1);
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(tx + 1, ty + 1);
+        this.ctx.lineTo(tx + tunit, ty + tunit);
+        this.ctx.lineTo(tx, ty + (tunit * 2));
+        this.ctx.stroke();
+
+        this.drawNumber(0, tx - (this.unit * 2 - 2) + 3, ty + 4, 2);
+
 
         this.ctx.translate(0, -2 * (this.unit + 1));
 
@@ -369,11 +378,13 @@ Lumines.StageView.prototype = {
             width = 1;
         }
 
-        var n = number % 10;
-        for (var w = width - 1; number > 0; w--) {
+        for (var w = width - 1; ; w--) {
             var n = number % 10;
             number = Math.floor(number / 10);
             this.drawNumeral(n, x + (widthx * w), y, sizex, sizey);
+            if (number == 0) {
+                break;
+            }
         }
     },
 };
