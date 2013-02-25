@@ -152,7 +152,11 @@ Lumines.StageView.prototype = {
         this.drawNumber(data.totalDeleted - data.recentDeleted, tx - (this.unit * 2 - 2) + 3, ty + 4, 2);
 
         // deleted
-        this.drawNumber(data.totalDeleted, (field.width + 1) * (this.unit + 1) + 4, 0, 3);
+        this.ctx.font = "11px Arial";
+        this.ctx.fillStyle = "#FFFFFF";
+        this.ctx.textBaseline = "middle";
+        this.ctx.fillText("DELETED", field.width * (this.unit + 1) + 4, this.unit / 2);
+        this.drawNumber(data.totalDeleted, field.width * (this.unit + 1) + 4, this.unit + 5, 5);
 
         this.ctx.translate(0, -2 * (this.unit + 1));
 
