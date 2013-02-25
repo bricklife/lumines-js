@@ -20,78 +20,85 @@ Lumines.Block.prototype = {
 
     grounding: function()
     {
-        switch (this.state) {
-        case Lumines.Block.State.ERASING:
-            break;
-        default:
-            this.state = Lumines.Block.State.GROUNDING;
-            return true;
+        if (this.isErasing()) {
+            return false;
         }
-        return false;
+
+        this.state = Lumines.Block.State.GROUNDING;
+        return true;
     },
 
     falling: function()
     {
-        switch (this.state) {
-        case Lumines.Block.State.ERASING:
-            break;
-        default:
-            this.state = Lumines.Block.State.FALLING;
-            return true;
+        if (this.isErasing()) {
+            return false;
         }
-        return false;
+
+        this.state = Lumines.Block.State.FALLING;
+        return true;
     },
 
     target: function()
     {
-        switch (this.state) {
-        case Lumines.Block.State.GROUNDING:
-        case Lumines.Block.State.SP_TARGET:
-            this.state = Lumines.Block.State.TARGET;
-            return true;
-        default:
-            break;
+        if (this.isErasing()) {
+            return false;
         }
-        return false;
+
+        this.state |= Lumines.Block.State.TARGET;
+        return true;
     },
 
     spTarget: function()
     {
-        switch (this.state) {
-        case Lumines.Block.State.GROUNDING:
-            this.state = Lumines.Block.State.SP_TARGET;
-            return true;
-        default:
-            break;
+        if (this.isErasing()) {
+            return false;
         }
-        return false;
+
+        this.state |= Lumines.Block.State.SP_TARGET;
+        return true;
     },
 
     erasing: function()
     {
-        switch (this.state) {
-        case Lumines.Block.State.TARGET:
-        case Lumines.Block.State.SP_TARGET:
+        if (this.isTarget() || this.isSpTarget()) {
             this.state = Lumines.Block.State.ERASING;
             return true;
-        default:
-            break;
         }
+
         return false;
     },
 
     isTarget: function()
     {
-        if (this.state == Lumines.Block.State.TARGET)
+        if ((this.state & Lumines.Block.State.TARGET) > 0)
             return true;
-        if (this.state == Lumines.Block.State.SP_TARGET)
+        return false;
+    },
+
+    isSpTarget: function()
+    {
+        if ((this.state & Lumines.Block.State.SP_TARGET) > 0)
             return true;
         return false;
     },
 
     isErasing: function()
     {
-        if (this.state == Lumines.Block.State.ERASING)
+        if ((this.state & Lumines.Block.State.ERASING) > 0)
+            return true;
+        return false;
+    },
+
+    isMoving: function()
+    {
+        if ((this.state & Lumines.Block.State.MOVING) > 0)
+            return true;
+        return false;
+    },
+
+    isFalling: function()
+    {
+        if ((this.state & Lumines.Block.State.FALLING) > 0)
             return true;
         return false;
     },
@@ -106,10 +113,10 @@ Lumines.Block.State = {
     INITIAL:   0,
     MOVING:    1,
     GROUNDING: 2,
-    FALLING:   3,
-    TARGET:    4,
-    SP_TARGET: 5,
-    ERASING:   6,
+    FALLING:   4,
+    TARGET:    8,
+    SP_TARGET: 16,
+    ERASING:   32,
 };
 
 
@@ -372,7 +379,7 @@ Lumines.Field.prototype = {
             return false;
         if (this.field[x][y] == null)
             return false;
-        if (this.field[x][y].state != Lumines.Block.State.FALLING)
+        if (!this.field[x][y].isFalling())
             return false;
         if (this.field[x][y + 1] != null)
             return false;

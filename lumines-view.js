@@ -170,7 +170,7 @@ Lumines.StageView.prototype = {
     
     drawBlock: function(block, x, y)
     {
-        if (block.state == Lumines.Block.State.ERASING) {
+        if (block.isErasing()) {
             this.ctx.fillStyle = "#888888";
             this.ctx.fillRect(x, y, this.unit, this.unit);
 
@@ -209,7 +209,7 @@ Lumines.StageView.prototype = {
 
     drawTargetBlock: function(block, x, y, position)
     {
-        if (block.state != Lumines.Block.State.TARGET)
+        if (!block.isTarget())
             return;
 
         var innerX = x;
