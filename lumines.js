@@ -246,6 +246,19 @@ Lumines.QuadBlock.prototype = {
             return this.block[1][1];
         return null;
     },
+
+    isErasing: function()
+    {
+        if (this.block[0][0] == null || !this.block[0][0].isErasing())
+            return false;
+        if (this.block[0][1] == null || !this.block[0][1].isErasing())
+            return false;
+        if (this.block[1][0] == null || !this.block[1][0].isErasing())
+            return false;
+        if (this.block[1][1] == null || !this.block[1][1].isErasing())
+            return false;
+        return true;
+    },
 };
 
 Lumines.QuadBlock.Position = {
@@ -457,6 +470,8 @@ Lumines.Stage = function(field, generator)
 
     this.movingBlock = null;
     this.timeline = -1;
+    this.totalDeleted = -1;
+    this.recentDeleted = -1;
     
     this.updatedBlocks = null;
 };
@@ -465,6 +480,8 @@ Lumines.Stage.prototype = {
     start: function()
     {
         this.timeline = 0;
+        this.totalDeleted = 0;
+        this.recentDeleted = 0;
         this.updatedBlocks = this.field.updateBlockState();
         this.appearNextBlock();
     },
@@ -613,10 +630,16 @@ Lumines.Stage.prototype = {
         this.timeline++;
 
         if (count == 0 || this.timeline == this.field.width) {
+            for (var i = 0; i < this.updatedBlocks.targetBlocks.length; i++) {
+                if (this.updatedBlocks.targetBlocks[i].isErasing()) {
+                    this.totalDeleted++;
+                }
+            }
             this.erase();
         }
 
         if (this.timeline == this.field.width) {
+            this.recentDeleted = this.totalDeleted;
             this.timeline = 0;
         }
     },
@@ -649,6 +672,8 @@ Lumines.Stage.prototype = {
         data.timeline = this.timeline;
         data.fallingBlocks = this.updatedBlocks.fallingBlocks;
         data.targetBlocks = this.updatedBlocks.targetBlocks;
+        data.totalDeleted = this.totalDeleted;
+        data.recentDeleted = this.recentDeleted;
 
         var nextBlocks = Array();
         for (var i = 0; i < 3; i++) {

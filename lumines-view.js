@@ -148,9 +148,11 @@ Lumines.StageView.prototype = {
         this.ctx.lineTo(tx + tunit, ty + tunit);
         this.ctx.lineTo(tx, ty + (tunit * 2));
         this.ctx.stroke();
+        
+        this.drawNumber(data.totalDeleted - data.recentDeleted, tx - (this.unit * 2 - 2) + 3, ty + 4, 2);
 
-        this.drawNumber(0, tx - (this.unit * 2 - 2) + 3, ty + 4, 2);
-
+        // deleted
+        this.drawNumber(data.totalDeleted, (field.width + 1) * (this.unit + 1) + 4, 0, 3);
 
         this.ctx.translate(0, -2 * (this.unit + 1));
 
