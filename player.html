@@ -92,18 +92,18 @@ if (stageStr != null) {
 
     var s = stageStr.match(/\D\d*/g);
     for (var i = 0; i < s.length; i++) {
-	if (s[i].match(/(\D)(\d*)/)) {
-	    var chr = RegExp.$1;
-	    var num = RegExp.$2;
-	    if (num == '') {
-		num = 1;
-	    } else {
-		num = parseInt(num);
-	    }
-	    for (var j = 0; j < num; j++) {
-		stage.push(chr);
-	    }
-	}
+        if (s[i].match(/(\D)(\d*)/)) {
+            var chr = RegExp.$1;
+            var num = RegExp.$2;
+            if (num == '') {
+                num = 1;
+            } else {
+                num = parseInt(num);
+            }
+            for (var j = 0; j < num; j++) {
+                stage.push(chr);
+            }
+        }
     }
 
     stage.reverse();
@@ -190,19 +190,19 @@ if (stage != null) {
     var lastNum = 1;
     var str = '';
     for (var i = 0; i < stage.length; i++) {
-	if (stage[i] != lastChr) {
-	    if (lastNum > 1) {
-		str += lastNum;
-	    }
-	    str += stage[i];
-	    lastChr = stage[i];
-	    lastNum = 1;
-	} else {
-	    lastNum++;
-	}
+        if (stage[i] != lastChr) {
+            if (lastNum > 1) {
+                str += lastNum;
+            }
+            str += stage[i];
+            lastChr = stage[i];
+            lastNum = 1;
+        } else {
+            lastNum++;
+        }
     }
     if (lastNum > 1) {
-	str += lastNum;
+        str += lastNum;
     }
     param.push('stage=' + str);
 }
