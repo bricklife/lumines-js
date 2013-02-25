@@ -152,10 +152,7 @@ Lumines.StageView.prototype = {
         this.drawNumber(data.totalDeleted - data.recentDeleted, tx - (this.unit * 2 - 2) + 3, ty + 4, 2);
 
         // deleted
-        this.ctx.font = "11px Arial";
-        this.ctx.fillStyle = "#FFFFFF";
-        this.ctx.textBaseline = "middle";
-        this.ctx.fillText("DELETED", field.width * (this.unit + 1) + 4, this.unit / 2);
+        this.drawText("DELETED", field.width * (this.unit + 1) + 4, 6);
         this.drawNumber(data.totalDeleted, field.width * (this.unit + 1) + 4, this.unit + 5, 5);
 
         this.ctx.translate(0, -2 * (this.unit + 1));
@@ -391,6 +388,68 @@ Lumines.StageView.prototype = {
             if (number == 0) {
                 break;
             }
+        }
+    },
+
+    drawChar: function(c, x, y, sizex, sizey)
+    {
+        this.ctx.strokeStyle = "#FFFFFF";
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
+
+        switch (c) {
+        case 'd':
+        case 'D':
+            this.ctx.moveTo(x + sizex - 1, y + 0.5);
+            this.ctx.lineTo(x + 0.5, y + 0.5);
+            this.ctx.lineTo(x + 0.5, y + sizey - 0.5);
+            this.ctx.lineTo(x + sizex - 1, y + sizey - 0.5);
+            this.ctx.stroke();
+            this.ctx.moveTo(x + sizex - 0.5, y + 1);
+            this.ctx.lineTo(x + sizex - 0.5, y + sizey - 1);
+            this.ctx.stroke();
+            return sizex;
+        case 'e':
+        case 'E':
+            this.ctx.moveTo(x + sizex, y + 0.5);
+            this.ctx.lineTo(x + 0.5, y + 0.5);
+            this.ctx.lineTo(x + 0.5, y + sizey - 0.5);
+            this.ctx.lineTo(x + sizex, y + sizey - 0.5);
+            this.ctx.stroke();
+            this.ctx.moveTo(x,  y + Math.floor(sizey / 2) + 0.5);
+            this.ctx.lineTo(x + sizex,  y + Math.floor(sizey / 2) + 0.5);
+            this.ctx.stroke();
+            return sizex;
+        case 'l':
+        case 'L':
+            this.ctx.moveTo(x + 0.5, y);
+            this.ctx.lineTo(x + 0.5, y + sizey - 0.5);
+            this.ctx.lineTo(x + sizex, y + sizey - 0.5);
+            this.ctx.stroke();
+            return sizex;
+        case 't':
+        case 'T':
+            this.ctx.moveTo(x + sizex, y + 0.5);
+            this.ctx.lineTo(x, y + 0.5);
+            this.ctx.stroke();
+            this.ctx.moveTo(x + Math.floor(sizex / 2) + 0.5,  y);
+            this.ctx.lineTo(x + Math.floor(sizex / 2) + 0.5,  y + sizey);
+            this.ctx.stroke();
+            return sizex;
+        default:
+            return 0;
+        }
+    },
+
+    drawText: function(text, x, y)
+    {
+        var sizex = 7;
+        var sizey = 5;
+
+        var chars = text.split('');
+        for (var i = 0; i < chars.length; i++) {
+            x += this.drawChar(chars[i], x, y, sizex, sizey);
+            x += 1;
         }
     },
 };
