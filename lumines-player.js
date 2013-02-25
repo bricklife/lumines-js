@@ -55,6 +55,8 @@ Lumines.Player.prototype = {
 
         this.pausing = false;
 
+        this.fall();
+
         this.startTimer();
     },
 
