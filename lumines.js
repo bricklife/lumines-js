@@ -61,7 +61,7 @@ Lumines.Block.prototype = {
     erasing: function()
     {
         if (this.isTarget() || this.isSpTarget()) {
-            this.state = Lumines.Block.State.ERASING;
+            this.state |= Lumines.Block.State.ERASING;
             return true;
         }
 

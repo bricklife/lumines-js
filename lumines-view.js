@@ -209,7 +209,7 @@ Lumines.StageView.prototype = {
 
     drawTargetBlock: function(block, x, y, position)
     {
-        if (!block.isTarget())
+        if (block.isErasing())
             return;
 
         var innerX = x;
