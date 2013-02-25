@@ -104,6 +104,8 @@ Lumines.StageView.prototype = {
         for (var i = targets.length - 1; i >= 0; i--) {
             var connect = -1;
             for (var j = 0; j < mass.length; j++) {
+                if (mass[j] == null)
+                    continue;
                 for (var k = 0; k < mass[j].length; k++) {
                     if (this.checkConnection(targets[i], mass[j][k])) {
                         if (connect == -1) {
