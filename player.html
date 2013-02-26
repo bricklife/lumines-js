@@ -13,8 +13,13 @@
 <canvas id="canvas" width="100" height="100"></canvas>
 
 <div>
-<input type="button" id="reset-button" value="reset" onclick="player.reset();" />
-<input type="button" id="pause-button" value="pause" onclick="pauseAndResumePlayer();" />
+<input type="button" id="speed-down-button" value="-" onclick="onSpeedDownButton()" />
+replay speed
+<input type="button" id="speed-up-button" value="+" onclick="onSpeedUpButton()" />
+</div>
+<div>
+<input type="button" id="reset-button" value="reset" onclick="player.reset()" />
+<input type="button" id="pause-button" value="pause" onclick="onPauseButton()" />
 </div>
 
 <p id="details">
@@ -54,6 +59,51 @@ function htmlspecialchars(ch) {
     ch = ch.replace(/</g, '&lt;');
     ch = ch.replace(/>/g, '&gt;');
     return ch;
+}
+
+function onPauseButton()
+{
+    if (player.isPausing()) {
+        player.resume();
+    } else {
+        player.pause();
+    }
+
+    updateUI();
+}
+
+function onSpeedDownButton()
+{
+    if (speed > 1) 
+        speed--;
+    player.setSpeed(speed);
+
+    updateUI();
+}
+
+function onSpeedUpButton()
+{
+    speed++;
+    player.setSpeed(speed);
+
+    updateUI();
+}
+
+function updateUI()
+{
+    var pause_button = document.getElementById("pause-button");
+    if (player.isPausing()) {
+        pause_button.value = "resume";
+    } else {
+        pause_button.value = "pause";
+    }
+
+    var speed_down_button = document.getElementById("speed-down-button");
+    if (speed > 1) {
+        speed_down_button.disabled = false;
+    } else {
+        speed_down_button.disabled = true;
+    }
 }
 
 var stage = null;
@@ -171,17 +221,7 @@ player.pushOperation(player.start);
 player.setSpeed(speed);
 player.start();
 
-function pauseAndResumePlayer()
-{
-    var button = document.getElementById("pause-button");
-    if (player.isPausing()) {
-        player.resume();
-        button.value = "pause";
-    } else {
-        player.pause();
-        button.value = "resume";
-    }
-}
+updateUI();
 
 if (comment != null) {
     document.getElementById('comment').innerHTML = htmlspecialchars(comment);
