@@ -1,10 +1,10 @@
 var Lumines = Lumines || {};
 
 
-Lumines.Block = function(color, isSpecial, state)
+Lumines.Block = function(color, hasSpecial, state)
 {
     this.color = (color != null) ? color : Lumines.Block.Color.WHITE;
-    this.isSpecial = (isSpecial != null) ? isSpecial : false;
+    this.hasSpecial = (hasSpecial != null) ? hasSpecial : false;
     this.state = (state != null) ? state : Lumines.Block.State.INITIAL;
 
     this.x = -1;
@@ -149,12 +149,12 @@ Lumines.QuadBlock = function(blackPosition, specialPosition)
             if (blackPosition & mask) {
                 color = Lumines.Block.Color.BLACK;
             }
-            var isSpecial = false;
+            var hasSpecial = false;
             if (specialPosition != null && (specialPosition & mask)) {
-                isSpecial = true;
+                hasSpecial = true;
             }
             
-            this.block[x][y] = new Lumines.Block(color, isSpecial);
+            this.block[x][y] = new Lumines.Block(color, hasSpecial);
             mask <<= 1;
         }
     }

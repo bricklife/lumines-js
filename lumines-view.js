@@ -32,11 +32,11 @@ Lumines.StageView.prototype = {
 
         var field = data.field;
 
-        this.ctx.fillStyle = "#666666"
+        this.ctx.fillStyle = "#555555"
         this.ctx.fillRect(0, 0, field.width * (this.unit + 1), field.height * (this.unit + 1));
 
         this.ctx.lineWidth = 1;
-        this.ctx.strokeStyle = "#CCCCCC";
+        this.ctx.strokeStyle = "#aaaaaa";
         this.ctx.strokeRect(-0.5, -0.5, field.width * (this.unit + 1), field.height * (this.unit + 1));
 
         for (var x = 0; x < field.width; x++) {
@@ -189,12 +189,37 @@ Lumines.StageView.prototype = {
             return;
         }
         
+        if (block.isSpTarget()) {
+            if (block.color == Lumines.Block.Color.WHITE) {
+                this.ctx.fillStyle = "#7aa2c0";
+            } else {
+                this.ctx.fillStyle = "#887665";
+            }
+            this.ctx.fillRect(x, y, this.unit, this.unit);
+            
+            this.ctx.lineWidth = 1;
+            this.ctx.strokeStyle = "#ffffff";
+            this.ctx.strokeRect(x - 0.5, y - 0.5, this.unit + 1, this.unit + 1);
+
+            return;
+        }
+
         if (block.color == Lumines.Block.Color.WHITE) {
             this.ctx.fillStyle = "#f8f8f8";
         } else {
             this.ctx.fillStyle = "#ff9939";
         }
         this.ctx.fillRect(x, y, this.unit, this.unit);
+
+        if (block.hasSpecial) {
+            var u = this.unit / 4;
+            this.ctx.fillStyle = "#a8a8a8";
+            this.ctx.fillRect(x + u, y + u, u * 2, u * 2);
+            this.ctx.fillStyle = "#40ebc3";
+            this.ctx.fillRect(x + u + 1, y + u + 1, u * 2 - 2, u * 2 - 2);
+            this.ctx.fillStyle = "#ffffff";
+            this.ctx.fillRect(x + u + 1, y + u + 1, 2, 2);
+        }
 
         this.ctx.lineWidth = 1;
         this.ctx.strokeStyle = "#666666";
