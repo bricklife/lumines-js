@@ -73,8 +73,11 @@ function onPauseButton()
 
 function onSpeedDownButton()
 {
-    if (speed > 1) 
+    if (speed > 1) {
         speed--;
+    } else {
+        speed /= 2;
+    }
     player.setSpeed(speed);
 
     updateUI();
@@ -82,7 +85,11 @@ function onSpeedDownButton()
 
 function onSpeedUpButton()
 {
-    speed++;
+    if (speed >= 1) {
+        speed++;
+    } else {
+        speed *= 2;
+    }
     player.setSpeed(speed);
 
     updateUI();
@@ -100,12 +107,16 @@ function updateUI()
     
     // speed control
     var speed_down_button = document.getElementById("speed-down-button");
-    if (speed > 1) {
+    if (speed > 0.25) {
         speed_down_button.disabled = false;
     } else {
         speed_down_button.disabled = true;
     }
-    document.getElementById("speed").innerHTML = speed;
+    var speedStr = speed;
+    if (speed < 1) {
+        speedStr = '1/' + (1 / speed);
+    }
+    document.getElementById("speed").innerHTML = speedStr;
 
     // comment
     if (comment != null) {
