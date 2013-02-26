@@ -11,9 +11,17 @@ Lumines.Player = function(canvas, width, height)
     this.originalField = new Lumines.Field(width, height);
     this.originalNextBlocks = new Array();
     this.originalOperations = new Array();
+    this.speed = 1;
 };
 
 Lumines.Player.prototype = {
+    setSpeed: function(speed)
+    {
+        if (speed > 0) {
+            this.speed = speed;
+        }
+    },
+
     reset: function()
     {
         this.field.clear();
@@ -64,7 +72,7 @@ Lumines.Player.prototype = {
     {
         if (this.pausing == false) {
             clearInterval(this.operationTimer);
-            this.operationTimer = this.doNextOperation.applyInterval(1000, this);
+            this.operationTimer = this.doNextOperation.applyInterval(1000 / this.speed, this);
         }
     },
 
@@ -149,7 +157,7 @@ Lumines.Player.prototype = {
 
         if (this.stage.fall()) {
             this.draw();
-            this.fallTimer = this.fall.applyTimeout(50, this);
+            this.fallTimer = this.fall.applyTimeout(50 / this.speed, this);
         } else {
             this.startTimer();
         }
@@ -160,7 +168,7 @@ Lumines.Player.prototype = {
         this.stopTimer();
 
         if (this.moveDown()) {
-            this.hardDropTimer = this.hardDrop.applyTimeout(50, this);
+            this.hardDropTimer = this.hardDrop.applyTimeout(50 / this.speed, this);
         } else {
             this.startTimer();
         }
@@ -176,7 +184,7 @@ Lumines.Player.prototype = {
         this.fall();
 
         if (timelinePos < this.field.width - 1) {
-            this.timelineTimer = this.timeline.applyTimeout(250, this);
+            this.timelineTimer = this.timeline.applyTimeout(250 / this.speed, this);
         } else {
             this.startTimer();
         }

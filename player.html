@@ -61,6 +61,7 @@ var stageStr = null;
 var nexts = null;
 var operations = null;
 var comment = null;
+var speed = 1;
 var q = getQueryValues();
 if (q == null) {
     q = {
@@ -81,6 +82,9 @@ if (q['op'] != null) {
 }
 if (q['comment'] != null) {
     comment = q['comment'];
+}
+if (q['speed'] != null) {
+    speed = parseInt(q['speed']);
 }
 
 var width = 16;
@@ -164,6 +168,7 @@ if (operations != null) {
 
 player.pushOperation(player.start);
 
+player.setSpeed(speed);
 player.start();
 
 function pauseAndResumePlayer()
