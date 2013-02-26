@@ -13,13 +13,12 @@
 <canvas id="canvas" width="100" height="100"></canvas>
 
 <div>
-<input type="button" id="speed-down-button" value="-" onclick="onSpeedDownButton()" />
-replay speed
-<input type="button" id="speed-up-button" value="+" onclick="onSpeedUpButton()" />
-</div>
-<div>
 <input type="button" id="reset-button" value="reset" onclick="player.reset()" />
 <input type="button" id="pause-button" value="pause" onclick="onPauseButton()" />
+speed:
+<input type="button" id="speed-down-button" value="-" onclick="onSpeedDownButton()" />
+<span id="speed">1</span>
+<input type="button" id="speed-up-button" value="+" onclick="onSpeedUpButton()" />
 </div>
 
 <p id="details">
@@ -91,19 +90,22 @@ function onSpeedUpButton()
 
 function updateUI()
 {
-    // buttons
+    // pause / resume button
     var pause_button = document.getElementById("pause-button");
     if (player.isPausing()) {
         pause_button.value = "resume";
     } else {
         pause_button.value = "pause";
     }
+    
+    // speed control
     var speed_down_button = document.getElementById("speed-down-button");
     if (speed > 1) {
         speed_down_button.disabled = false;
     } else {
         speed_down_button.disabled = true;
     }
+    document.getElementById("speed").innerHTML = speed;
 
     // comment
     if (comment != null) {
