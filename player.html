@@ -157,7 +157,7 @@ function updateUI()
     if (comment != null) {
         param.push('comment=' + escape(comment));
     }
-    if (speed > 1) {
+    if (speed != 1) {
         param.push('speed=' + speed);
     }
     if (param.length > 0) {
@@ -194,8 +194,11 @@ if (q['op'] != null) {
 if (q['comment'] != null) {
     comment = q['comment'];
 }
-if (q['speed'] != null) {
-    speed = parseInt(q['speed']);
+if (!isNaN(q['speed'])) {
+    speed = parseFloat(q['speed']);
+    if (speed <= 0) {
+        speed = 1;
+    }
 }
 
 // create player
