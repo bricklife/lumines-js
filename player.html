@@ -91,21 +91,69 @@ function onSpeedUpButton()
 
 function updateUI()
 {
+    // buttons
     var pause_button = document.getElementById("pause-button");
     if (player.isPausing()) {
         pause_button.value = "resume";
     } else {
         pause_button.value = "pause";
     }
-
     var speed_down_button = document.getElementById("speed-down-button");
     if (speed > 1) {
         speed_down_button.disabled = false;
     } else {
         speed_down_button.disabled = true;
     }
+
+    // comment
+    if (comment != null) {
+        document.getElementById('comment').innerHTML = htmlspecialchars(comment);
+    }
+
+    // url
+    var url = location.protocol + '//' + location.host + location.pathname;
+    var param = new Array();
+    if (stage != null) {
+        stage.reverse();
+        var lastChr = '';
+        var lastNum = 1;
+        var str = '';
+        for (var i = 0; i < stage.length; i++) {
+            if (stage[i] != lastChr) {
+                if (lastNum > 1) {
+                    str += lastNum;
+                }
+                str += stage[i];
+                lastChr = stage[i];
+                lastNum = 1;
+            } else {
+                lastNum++;
+            }
+        }
+        if (lastNum > 1) {
+            str += lastNum;
+        }
+        param.push('stage=' + str);
+    }
+    if (nexts != null) {
+        param.push('next=' + nexts.join(''));
+    }
+    if (operations != null) {
+        param.push('op=' + operations.join(''));
+    }
+    if (comment != null) {
+        param.push('comment=' + escape(comment));
+    }
+    if (speed > 1) {
+        param.push('speed=' + speed);
+    }
+    if (param.length > 0) {
+        url += '?' + param.join('&');
+    }
+    document.getElementById('url').innerHTML = '<a href="' + url + '">' + url + '</a>';
 }
 
+// set parameters
 var stage = null;
 var stageStr = null;
 var nexts = null;
@@ -137,10 +185,12 @@ if (q['speed'] != null) {
     speed = parseInt(q['speed']);
 }
 
+// create player
 var width = 16;
 var height = 10;
 var player = new Lumines.Player(document.getElementById('canvas'), width, height);
 
+// set stage
 if (stageStr != null) {
     stage = new Array();
 
@@ -174,6 +224,7 @@ if (stageStr != null) {
     }
 }
 
+// set next blocks
 if (nexts != null) {
     for (var i = 0; i < nexts.length; i++) {
         if (nexts[i].match(/[0123456789ABCDEF]/)) {
@@ -184,7 +235,8 @@ if (nexts != null) {
         }
     }
 }
-    
+
+// set operations
 if (operations != null) {
     for (var i = 0; i < operations.length; i++) {
         switch (operations[i]) {
@@ -214,56 +266,14 @@ if (operations != null) {
             break;
         }
     }
+    player.pushOperation(player.start);
 }
 
-player.pushOperation(player.start);
-
+// start player
 player.setSpeed(speed);
 player.start();
 
 updateUI();
-
-if (comment != null) {
-    document.getElementById('comment').innerHTML = htmlspecialchars(comment);
-}
-
-var url = location.protocol + '//' + location.host + location.pathname;
-var param = new Array();
-if (stage != null) {
-    stage.reverse();
-    var lastChr = '';
-    var lastNum = 1;
-    var str = '';
-    for (var i = 0; i < stage.length; i++) {
-        if (stage[i] != lastChr) {
-            if (lastNum > 1) {
-                str += lastNum;
-            }
-            str += stage[i];
-            lastChr = stage[i];
-            lastNum = 1;
-        } else {
-            lastNum++;
-        }
-    }
-    if (lastNum > 1) {
-        str += lastNum;
-    }
-    param.push('stage=' + str);
-}
-if (nexts != null) {
-    param.push('next=' + nexts.join(''));
-}
-if (operations != null) {
-    param.push('op=' + operations.join(''));
-}
-if (comment != null) {
-    param.push('comment=' + escape(comment));
-}
-if (param.length > 0) {
-    url += '?' + param.join('&');
-}
-document.getElementById('url').innerHTML = '<a href="' + url + '">' + url + '</a>';
 
 </script>
 
