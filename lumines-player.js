@@ -29,8 +29,7 @@ Lumines.Player.prototype = {
             for (var x = 0; x < this.field.width; x++) {
                 var block = this.originalField.blockAt(x, y);
                 if (block != null) {
-                    var color = block.color;
-                    this.field.setBlockAt(new Lumines.Block(color), x, y);
+                    this.field.setBlockAt(new Lumines.Block(block.color, block.hasSpecial), x, y);
                 }
             }    
         }
@@ -38,7 +37,8 @@ Lumines.Player.prototype = {
         var generator = new Lumines.NextBlockGenerator();
         for (var i = 0; i < this.originalNextBlocks.length; i++) {
             var blackPosition = this.originalNextBlocks[i].blackPosition;
-            generator.pushNextBlock(new Lumines.QuadBlock(blackPosition));
+            var specialPosition = this.originalNextBlocks[i].specialPosition;
+            generator.pushNextBlock(new Lumines.QuadBlock(blackPosition, specialPosition));
         }
     
         this.operations = new Array();

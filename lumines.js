@@ -142,6 +142,8 @@ Lumines.QuadBlock = function(blackPosition, specialPosition)
         return;
     }
 
+    this.specialPosition = (specialPosition != null) ? specialPosition : Lumines.QuadBlock.Position.NONE;
+
     var mask = 0x1;
     for (var y = 0; y < 2; y++) {
         for (var x = 0; x < 2; x++) {
@@ -150,7 +152,7 @@ Lumines.QuadBlock = function(blackPosition, specialPosition)
                 color = Lumines.Block.Color.BLACK;
             }
             var hasSpecial = false;
-            if (specialPosition != null && (specialPosition & mask)) {
+            if (this.specialPosition & mask) {
                 hasSpecial = true;
             }
             
@@ -460,7 +462,7 @@ Lumines.NextBlockGenerator.prototype = {
         }
     },
 
-    popNextBlock: function()
+    shiftNextBlock: function()
     {
         if (this.nextBlocks.length > 0) {
             return this.nextBlocks.shift();
@@ -481,10 +483,10 @@ Lumines.RandomBlockGenerator = function()
 
 Lumines.RandomBlockGenerator.prototype = new Lumines.NextBlockGenerator();
 
-Lumines.RandomBlockGenerator.prototype.popNextBlock = function()
+Lumines.RandomBlockGenerator.prototype.shiftNextBlock = function()
 {
     this.pushRandomBlock();
-    return Lumines.NextBlockGenerator.prototype.popNextBlock.call(this);
+    return Lumines.NextBlockGenerator.prototype.shiftNextBlock.call(this);
 };
 
 Lumines.RandomBlockGenerator.prototype.pushRandomBlock = function()
@@ -524,7 +526,7 @@ Lumines.Stage.prototype = {
     appearNextBlock: function()
     {
         if (this.nextBlockGenerator != null) {
-            var block = this.nextBlockGenerator.popNextBlock();
+            var block = this.nextBlockGenerator.shiftNextBlock();
             if (block != null) {
                 block.startMoving(Math.floor(this.field.width / 2) - 1, -2);
                 this.movingBlock = block;

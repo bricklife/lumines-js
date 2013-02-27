@@ -227,28 +227,51 @@ if (stageStr != null) {
     }
 
     stage.reverse();
+    var num = 0;
+    var sp = false;
     for (var i = 0; i < stage.length; i++) {
-        var x = width - (i % width) - 1;
-        var y = height - Math.floor(i / width) - 1;
+        if (stage[i] == 's') {
+            sp = true;
+            continue;
+        }
+        var x = width - (num % width) - 1;
+        var y = height - Math.floor(num / width) - 1;
         if (stage[i] == 'B') {
-            player.setBlockAt(new Lumines.Block(Lumines.Block.Color.BLACK), x, y);
+            player.setBlockAt(new Lumines.Block(Lumines.Block.Color.BLACK, sp), x, y);
         } else if (stage[i] == 'W') {
-            player.setBlockAt(new Lumines.Block(Lumines.Block.Color.WHITE), x, y);
+            player.setBlockAt(new Lumines.Block(Lumines.Block.Color.WHITE, sp), x, y);
         } else {
             stage[i] = '-';
         }
+        sp = false;
+        num++;
     }
 }
 
 // set next blocks
 if (nexts != null) {
+    var nextArray = new Array();
     for (var i = 0; i < nexts.length; i++) {
         if (nexts[i].match(/[0123456789ABCDEF]/)) {
             var type = parseInt(nexts[i], 16);
-            player.pushNextBlock(new Lumines.QuadBlock(type));
+            nextArray.push(new Lumines.QuadBlock(type));
+        } else if (nexts[i] == 's') {
+            i++;
+            if (nexts[i].match(/[0123456789ABCDEF]/)) {
+                var sp = parseInt(nexts[i], 16);
+                var block = nextArray.pop();
+                nextArray.push(new Lumines.QuadBlock(block.blackPosition, sp));
+            } else {
+                nexts[i - 1] = '';
+                nexts[i] = '';
+            }
         } else {
             nexts[i] = '';
         }
+    }
+
+    for (var i = 0; i < nextArray.length; i++) {
+        player.pushNextBlock(nextArray[i]);
     }
 }
 
