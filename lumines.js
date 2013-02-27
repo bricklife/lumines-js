@@ -259,6 +259,19 @@ Lumines.QuadBlock.prototype = {
             return false;
         return true;
     },
+
+    hasSpecial: function()
+    {
+        if (this.block[0][0] != null && this.block[0][0].hasSpecial)
+            return true;
+        if (this.block[0][1] != null && this.block[0][1].hasSpecial)
+            return true;
+        if (this.block[1][0] != null && this.block[1][0].hasSpecial)
+            return true;
+        if (this.block[1][1] != null && this.block[1][1].hasSpecial)
+            return true;
+        return false;
+    },
 };
 
 Lumines.QuadBlock.Position = {
@@ -380,9 +393,31 @@ Lumines.Field.prototype = {
             }
         }
 
+        for (var i = 0; i < targetBlocks.length; i++) {
+            if (targetBlocks[i].hasSpecial()) {
+                this.updateSpTarget(targetBlocks[i].x, targetBlocks[i].y);
+            }
+        }
+
         return {fallingBlocks: fallingBlocks, targetBlocks: targetBlocks};
     },
 
+    updateSpTarget: function(x, y)
+    {
+        var block = this.blockAt(x, y);
+        block.spTarget();
+
+        var pos = [[x, y - 1], [x - 1, y], [x + 1, y], [x, y + 1]];
+        for (var i = 0; i < pos.length; i++) {
+            var check = this.blockAt(pos[i][0], pos[i][1]);
+            if (check == null)
+                continue;
+            if (check.color == block.color && !check.isSpTarget()) {
+                this.updateSpTarget(pos[i][0], pos[i][1]);
+            }
+        }
+    },
+    
     fallBlockFrom: function(x, y)
     {
         if (x == null || y == null)
